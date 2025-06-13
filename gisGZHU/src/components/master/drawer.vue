@@ -11,10 +11,10 @@ import List from './list.vue';
                 id="img" :img-style="{ opacity: 0.7 }">
                 <div class="absolute-bottom bg-transparent">
                     <q-avatar size="56px" class="q-mb-sm">
-                        <img src="https://s2.loli.net/2024/11/25/AbQMyVGWimYFcv9.jpg">
+                        <img src="https://tse3-mm.cn.bing.net/th/id/OIP-C.T1Ir__YMxonBm9oaPK8dgwHaHa?rs=1&pid=ImgDetMain" >
                     </q-avatar>
-                    <div class="text-weight-bold">小海</div>
-                    <div>冷薪为谁而燃</div>
+                    <div class="text-weight-bold">广州大学</div>
+                    <div>学校有大学城、桂花岗、黄埔三个校区，全校四万余人</div>
                 </div>
             </q-img>
             <div class="containt">
@@ -46,4 +46,5 @@ import List from './list.vue';
     top: 20%;
     position: relative;
 }
+
 </style>

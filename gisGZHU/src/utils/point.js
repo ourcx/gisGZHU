@@ -75,6 +75,7 @@ function point(lonLat, source, map, name, text = '') {
     if (item.name == name) {
       img.src = item.img;
       img.style.width = '60px';
+      img.style.opacity  = '1';
     }
   })
 
@@ -101,6 +102,8 @@ function point(lonLat, source, map, name, text = '') {
   // 创建 HTML 标签 Overlay
   const labelEl = document.createElement('div');
   labelEl.className = 'label';
+  labelEl.style.opacity = 0.8;
+  labelEl.style.backdropFilter = 'blur(50px)';
   labelEl.textContent = name;
   labelEl.appendChild(document.createElement('br'));
   labelEl.appendChild(img);
@@ -145,6 +148,15 @@ function startPoint(source, map) {
   point([113.26560404516607, 23.150609007703792], source, map, '11号楼', "有些课在这里上")
   point([113.26602492351883, 23.15111568909228], source, map, '研究生宿舍', "宿舍")
   point([113.26721412897234, 23.148389142303813], source, map, '后山', "篮球场,羽毛球场,后山很大,走楼梯上去")
+  point([114.99878839691846, 24.09597331244494], source, map, '东源县上莞中学', "上莞中学")
+  point([114.99908154909424, 24.09565363827879], source, map, '教室', "下莞中学")
+  point([114.99812061633897, 24.096139421698098], source, map, '操场', "操场")
+point([114.99879420593409, 24.094587441373037], source, map, '宿舍', "宿舍")
+point([114.99872032063743, 24.095227492634592], source, map, '培英楼', "培英楼")
+point([114.99913571534778, 24.09472788483538], source, map, '饭堂', "饭堂")
+point([114.99364553429112, 24.098616688307075], source, map, '菜市场', "菜市场")
+point([114.99406947614328, 24.098749093459446], source, map, '超市', "超市")
+point([114.99415483345071, 24.097905117118557], source, map, '政府', "政府")
 }
 
 
