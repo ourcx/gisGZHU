@@ -1,11 +1,8 @@
 <script setup>
-import Mian from "./page/main.vue"
 </script>
 
 <template>
-<Mian/>
+  <router-view></router-view>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

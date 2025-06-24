@@ -1,7 +1,7 @@
 <template>
     <q-dialog v-model="dialog" persistent :maximized="maximizedToggle" transition-show="slide-up"
         transition-hide="slide-down">
-        <q-card class=" text-white" style="width: 100%;overflow: hidden;height: auto;min-width: 1000px;">
+        <q-card class=" text-white" style="width: 101vw;overflow: hidden;height: auto;">
             <q-bar class="q-bar">
                 <q-space />
 
@@ -132,6 +132,10 @@ watch(shape, (newVal) => {
 
 const sendTime = () => {
     DialogStore.addDialog(obj)
+    obj.title = '主题'
+    obj.content = '内容'
+    obj.icon = ''
+    icon.value = false
 }   
 
 </script>

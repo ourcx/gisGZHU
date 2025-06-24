@@ -8,23 +8,20 @@
   <title>gisGZHU</title>
 </head>
 <style>
-  /* 关键 CSS 代码 */
+  :root{
+    --width-map: 90vh;
+  }
   html,
   body {
     margin: 0;
-    /* 移除默认外边距 */
     padding: 0;
-    /* 移除默认内边距 */
     height: 100%;
-    /* 确保 html 和 body 占满视口 */
     width: 100%;
   }
 
   #app {
     height: 100% !important;
-    /* 视口高度的 100% */
     width: 100% !important;
-    /* 视口宽度的 100% */
     max-width: 10000px !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -41,26 +38,19 @@
     -webkit-user-select: none !important;
   }
 
-  /* 自定义地名标签样式 */
   .map-label {
     position: absolute;
     background: rgba(255, 255, 255, 0.9);
     border: 1px solid #4a90e2;
-    /* border-radius: 4px; */
-    /* padding: 6px 12px; */
     font-family: Arial, sans-serif;
-    /* font-size: 14px; */
     color: #333;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* transform: translate(-50%, -100%); */
     white-space: nowrap;
     font-size: 1em;
-    /* 动态覆盖 */
     padding: 0.25em 0.5em;
     border-radius: 0.2em;
     transform: translate(-50%, -100%) scale(1);
     transition: font-size 0.3s ease;
-    /* 平滑过渡 */
   }
 
   .map-label::after {
@@ -114,7 +104,9 @@
     backdrop-filter: blur(50px);
   }
 
-  
+  .q-drawer{
+    height: var(--width-map);
+  } 
 
 
 </style>

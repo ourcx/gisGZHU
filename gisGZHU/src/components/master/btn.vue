@@ -75,7 +75,8 @@ watch(
           // 处理周边介绍逻辑
           break;
         case 4:
-          console.log("开启点标注");
+          console.log("开启快递点");
+          ContorlStore.getExpress();
           // 处理点标注逻辑
           break;
         case 5:
@@ -85,6 +86,7 @@ watch(
           break;
         case 6:
           console.log("开启校历");
+          ContorlStore.showImgFu('https://s2.loli.net/2025/06/13/J3P7nDVsrl2RaLN.png');
           break;
         case 7:
           console.log("开启报道准备");
@@ -112,7 +114,8 @@ watch(
           // 清理周边介绍逻辑
           break;
         case 4:
-          console.log("关闭点标注");
+          console.log("关闭快递点");
+          ContorlStore.removeExpress();
           // 清理点标注逻辑
           break;
         case 5:
@@ -123,6 +126,7 @@ watch(
           break;
         case 6:
           console.log("关闭校历");
+          ContorlStore.showImgFu();
           break;
         case 7:
           console.log("关闭报道准备");
@@ -151,6 +155,7 @@ watch(
           multiple
           emit-value
           map-options
+          hide-bottom-space
         >
           <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
             <q-item v-bind="itemProps" style="color: #000">
@@ -175,6 +180,6 @@ watch(
 <style scoped>
 #ScaleLine {
   width: 100%;
-  height: 20px;
+  height: 5px;
 }
 </style>

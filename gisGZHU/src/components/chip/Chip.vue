@@ -1,12 +1,13 @@
 <template>
   <q-dialog v-model="showDialog" >
     <!-- 对话框主容器 -->
-    <q-card class="card-wall-dialog" @click="Chip.changeChip">
+    <q-card class="card-wall-dialog" >
       <!-- 对话框头部 -->
       <q-card-section class="row items-center q-py-sm q-px-md bg-white">
-        <div class="text-h6 text-weight-bold">校园记忆墙</div>
+        <div class="text-h6 text-weight-bold ">校园记忆墙</div>
+        <q-btn icon="help" flat round dense />
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn icon="close" flat round dense v-close-popup @click="Chip.changeChip"/>
       </q-card-section>
 
       <q-separator />
@@ -54,8 +55,8 @@ const showDialog =computed(()=>Chip.chip)
 // 每张卡片除了内容，还包含一个 style 对象，用于定义其在墙上的位置和样式
 const cardList = ref([
   {
-    content: "图书馆前的银杏道，秋天是金色的海洋。",
-    image: "https://cdn.quasar.dev/img/material.png",
+    content: "飘走的流年任风吹，广州的天空，在路上",
+    image: "https://s2.loli.net/2025/06/13/SP6wneV4Zh52rKm.jpg",
     style: {
       top: "20px",
       left: "5%",
@@ -64,8 +65,8 @@ const cardList = ref([
     },
   },
   {
-    content: "傍晚的篮球场，充满了青春的汗水和呐喊。",
-    image: "https://cdn.quasar.dev/img/mountains.jpg",
+    content: "铁路的尽头，有很多的涂鸦 南尽头是扇铁门 旁边的涂鸦是“LOVE And Peace” 北尽头则通向公路 南短北长",
+    image: "https://s2.loli.net/2025/06/13/rOHENXJgvja3VUM.png",
     style: {
       top: "150px",
       left: "45%",
@@ -74,8 +75,8 @@ const cardList = ref([
     },
   },
   {
-    content: "还记得大一迎新晚会的舞台吗？灯光璀璨。",
-    image: "https://cdn.quasar.dev/img/parallax1.jpg",
+    content: "日落，图书馆看向足球场，屠龙的少年还在燃烧",
+    image: "https://s2.loli.net/2025/06/13/AQJezCmSVNE48WP.jpg",
     style: {
       top: "50px",
       left: "60%",
@@ -84,8 +85,8 @@ const cardList = ref([
     },
   },
   {
-    content: "深夜的实验室，见证了无数的努力与突破。",
-    image: "https://cdn.quasar.dev/img/parallax2.jpg",
+    content: "无数个深夜，忙忙碌碌又一天",
+    image: "https://s2.loli.net/2025/06/13/rycwiSaRO8Mx3nV.jpg",
     style: {
       top: "300px",
       left: "10%",
@@ -94,8 +95,8 @@ const cardList = ref([
     },
   },
   {
-    content: "毕业那天，我们在这里合影，说了再见。",
-    image: "https://cdn.quasar.dev/img/quasar.jpg",
+    content: "军训",
+    image: "https://s2.loli.net/2025/06/13/xitz8pXHeEGOnJA.jpg",
     style: {
       top: "320px",
       left: "55%",
@@ -104,8 +105,8 @@ const cardList = ref([
     },
   },
   {
-    content: "湖边的长椅，是情侣们的约会圣地。",
-    image: "https://cdn.quasar.dev/img/cat.jpg",
+    content: "耳机里播放着每一首歌，好像回不到的过去",
+    image: "https://s2.loli.net/2025/06/13/x4Wl3dimHg25PRQ.jpg",
     style: {
       top: "480px",
       left: "30%",
@@ -123,7 +124,7 @@ const cardList = ref([
   width: 100%;
   height: 90vh; /* 高度也增加 */
   max-height: 700px;
-
+  color: black;
   display: flex;
   flex-direction: column;
   border-radius: 12px;

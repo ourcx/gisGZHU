@@ -7,12 +7,22 @@ import { fromLonLat, toLonLat } from 'ol/proj'
 import { Style, Stroke, Icon, Fill } from 'ol/style'
 import Point from 'ol/geom/Point'
 import { Polygon } from 'ol/geom'
+import {
+  addPoint,
+  point,
+  updateLabelSize,
+  removePoint,
+  startPoint
+} from '../utils/point'
+import { map } from 'd3'
 
 // 你可以任意命名 `defineStore()` 的返回值，但最好使用 store 的名字，同时以 `use` 开头且以 `Store` 结尾。
 // (比如 `useUserStore`，`useCartStore`，`useProductStore`)
 // 第一个参数是你的应用中 Store 的唯一 ID。
 export const useContorlStore = defineStore('contorl', {
   state: () => ({
+    Map: null,
+    Source: null,
     list: [],
     init: [
       // 直接作为返回对象的属性
@@ -27,35 +37,29 @@ export const useContorlStore = defineStore('contorl', {
       {
         name: '南门',
         intorduction: '学校正门',
-        img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+        img: 'https://s2.loli.net/2025/06/17/ASBcPixzg2JpYFM.png',
         data: []
       },
       {
-        name: '北门',
-        intorduction: '正门对着的',
-        img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
-        data: []
-      },
-      {
-        name: '操场',
+        name: '足球场',
         intorduction: '学校操场,校园跑和军训场所',
         img: 'https://s2.loli.net/2025/06/03/Sys2jOJChH6BL7i.jpg',
         data: []
       },
       {
-        name: '一号楼',
+        name: '1号楼',
         intorduction: '学校一号楼,领导办公室和学院办公室',
         img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
         data: []
       },
       {
-        name: '二号楼',
+        name: '2号楼',
         intorduction: '学校二号楼,只有一楼教室是你可能用得上的地方',
         img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
         data: []
       },
       {
-        name: '五号楼(图书馆)',
+        name: '5号楼(图书馆)',
         intorduction: '图书馆一定是最重要的地方,剩下就是教学区域,分为南北楼',
         img: 'https://s2.loli.net/2025/06/03/VmwvZkWEJGtdrxz.jpg',
         data: []
@@ -63,19 +67,19 @@ export const useContorlStore = defineStore('contorl', {
       {
         name: '饭堂',
         intorduction: '没有人不期待饭堂吧，别吃西北风味，滑蛋饭才是神',
-        img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+        img: 'https://s2.loli.net/2025/06/17/YR32rnvshKFETyu.jpg',
         data: []
       },
       {
         name: '宿舍',
         intorduction: '一般,如果你在六号楼,那很恭喜了,好地方',
-        img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+        img: 'https://s2.loli.net/2025/06/17/mNSur6dPY7nqZD4.png',
         data: []
       },
       {
-        name: '后山篮球场',
+        name: '后山',
         intorduction: '不去,死宅是见光死的生物',
-        img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+        img: 'https://s2.loli.net/2025/06/17/HFkaGuosvWM9j4r.png',
         data: []
       },
       {
@@ -85,78 +89,106 @@ export const useContorlStore = defineStore('contorl', {
         data: []
       },
       {
-        name: '东源县上莞中学',
-        intorduction: '上莞中学',
-        img: 'https://s2.loli.net/2025/06/11/BG3oE46WfKA7Dgp.jpg',
+        name: '9号楼',
+        intorduction:
+          '不可言语的教室，我一直看着你（其实是废弃的美术教室）9号楼废弃楼层守则 1. 7楼雕塑陈列室每日19:00后禁止入内。2. 若听见石膏碎裂声，请勿回头，缓步倒退至楼梯间。3. 所有雕塑眼睛均朝固定方向，如发现某雕塑注视你，立即闭眼默数10秒。4. 请不要注视墙壁画作超过9秒，若超过请及时联系保安。',
+        img: 'https://s2.loli.net/2025/06/13/m4KHpaBUnxzbDde.png',
         data: []
       },
       {
-        name: '教室',
-        intorduction: '教室',
-        img: 'https://s2.loli.net/2025/06/11/URfAsYdqMX841GO.jpg',
+        name: '铁路',
+        intorduction:
+          '铁路涂鸦区安全指南：1. 铁路年久失修，进入时请注意涂鸦时间。2. 铁路口设有保安亭，请向保安出示涂鸦证明。3. 仅允许沿涂鸦墙侧单向行走，严禁踏上铁轨。4. 如遇铁轨震动，无论是否听见鸣笛，请立刻面朝“爱与和平”涂鸦静立。5. 涂鸦内容每日更新，若发现“爱与和平”字样消失，30秒内必须离开铁路区域。6. 如偶遇列车经过时，切勿与车窗内人影对视。',
+        img: 'https://s2.loli.net/2025/06/13/5eHx4roGFhcZPMk.png',
         data: []
       },
       {
-        name: '操场',
-        intorduction: '操场',
-        img: 'https://s2.loli.net/2025/06/11/9aDwTWuKl1B4M8t.jpg',
+        name: '北区学术交流中心',
+        intorduction:
+          '研究生宿舍（原酒店）二楼须知 1. 二楼正式楼梯永久封闭，寻找入口请遵循校内流浪猫动向。2. 入口仅出现在消防栓旁或配电箱铁门后，出现时间不超过5分钟。3. 进入后，任何情况下不得打开照明设备。4. 若脚下积水深度超过脚踝，请沿原路安静撤离，勿跑动。5. 听见积水中有脚步声跟随，可停下轻哼校歌，直至声音消失。',
+        img: 'https://s2.loli.net/2025/06/14/Vghe4OEkcGvUY9n.png',
         data: []
       },
       {
-        name: '宿舍',
-        intorduction: '宿舍',
-        img: 'https://s2.loli.net/2025/06/11/zUjk6cnTDVCtNb5.jpg',
-        data: []
-      },
-      {
-        name: '培英楼',
-        intorduction: '培英楼',
-        img: 'https://s2.loli.net/2025/06/11/S7n2GlOJV5KZjWQ.jpg',
-        data: []
-      },
-      {
-        name: '饭堂',
-        intorduction: '饭堂',
-        img: 'https://s2.loli.net/2025/06/11/F8xAQ7EYUluDbpy.jpg',
-        data: []
-      },
-      {
-        name: '菜市场',
-        intorduction: '菜市场',
-        img: 'https://s2.loli.net/2025/06/11/ZUJswDQd2YLNyGP.jpg',
-        data: []
-      },
-      {
-        name: '超市',
-        intorduction: '超市',
-        img: 'https://s2.loli.net/2025/06/11/G6nHLAKfw5aoYvr.jpg',
-        data: []
-      },
-      {
-        name: '政府',
-        intorduction: '政府',
-        img: 'https://s2.loli.net/2025/06/11/OQYwKxA1o5sgM2j.jpg',
+        name: '女生宿舍自习室',
+        intorduction: '在饭堂三楼,只有女生能去，注意自习室守则哦',
+        img: 'https://s2.loli.net/2025/06/17/GnuxOPLfcwSFdav.png',
         data: []
       }
     ],
     path: [
       {
-        name: '南门1111111111',
+        name: '南门',
         intorduction: '学校正门',
-        img: 'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png',
+        img: 'https://s2.loli.net/2025/06/17/ASBcPixzg2JpYFM.png',
         data: [
           [113.26501458389775, 23.149860944010683],
           [113.26587649929671, 23.14974175766163]
         ],
-        type: 'path'
+        type: 'path',
+        show:false
+      },
+      {
+        name: '梓元岗地铁站',
+        intorduction: '梓元岗地铁站',
+        img: 'https://s2.loli.net/2025/06/17/ASBcPixzg2JpYFM.png',
+        data: [
+          [113.26558514764852, 23.14981790831878],
+          [113.26274366730087, 23.150009197280013],
+          [113.2631992835829, 23.153315020150586]
+        ],
+        type: 'path',
+        show:false
+      },
+      {
+        name: '广州火车站',
+        intorduction: '广州火车站',
+        img: 'https://s2.loli.net/2025/06/17/ASBcPixzg2JpYFM.png',
+        data: [
+          [113.26557985911741, 23.149797802594804],
+          [113.26278130143069, 23.150004868049237],
+          [113.26196016047142, 23.145938952133434],
+          [113.25900708110724, 23.14672187770779],
+          [113.25832031853295, 23.147362808263736],
+          [113.25729017434405, 23.147798639260913]
+        ],
+        type: 'path',
+        show:false
+      },
+      {
+        name: '铁路涂鸦区',
+        intorduction: '铁路涂鸦区',
+        img: 'https://s2.loli.net/2025/06/13/5eHx4roGFhcZPMk.png',
+        data: [
+          [113.26601059818056, 23.147229819783163],
+          [113.26658576157453, 23.148397309403364],
+          [113.26654725609032, 23.149699890044786],
+          [113.26664168581327, 23.1508258814424],
+          [113.26716234455965, 23.152074380314488],
+          [113.2679435368569, 23.153748614835834],
+        ],
+        type: 'path',
+        show:false
       }
     ],
     intorduction: [
       {
-        name: '不懂',
-        intorduction: '学校',
-        img: 'https://s2.loli.net/2025/06/03/gzkGDVItq3wJXKF.png',
+        name: '外围街道',
+        intorduction: '大门走出来那条街道上的食物，暂时没有全部店面图片',
+        img: 'https://s2.loli.net/2025/06/24/H8cZoFUziJAIxgy.jpg',
         data: []
+      },
+      {
+        name: '周边',
+        intorduction: '周边的街景，暂时没有全部图片',
+        img: 'https://s2.loli.net/2025/06/24/NQVIR6gnxYeJGki.jpg',
+        data: []
+      },
+      {
+        name:"公园",
+        introduction:"公园的街景，暂时没有全部图片---越秀公园，流花湖公园，麓湖公园等",
+        img:"",
+        data:[]
       }
     ],
     indexRecommendation: 0,
@@ -169,6 +201,38 @@ export const useContorlStore = defineStore('contorl', {
     //区块
     vectorLayer: null,
     listPopup: false,
+    ShowImg: false,
+    ShowImgUrl: '',
+    Express: [
+      {
+        name: '快宝驿站',
+        intorduction: '快宝驿站',
+        img: 'https://store.is.autonavi.com/showpic/541f033d82ca1e762127e41456210941',
+        data: []
+      },
+      {
+        name: '菜鸟驿站',
+        intorduction: '菜鸟驿站',
+        img: 'https://store.is.autonavi.com/showpic/1564029cfc2074e9e53d3a01a37f7564',
+        data: []
+      },
+      {
+        name: '韵达快递',
+        intorduction: '顺丰快递在它旁边',
+        img: 'https://s2.loli.net/2025/06/24/N3VvsETY6doGMCp.png',
+        data: []
+      },
+      {
+        name: '快递柜',
+        intorduction: '快递柜，绿色的',
+        img: '',
+        data: []
+      },
+      {
+        name: '自提点',
+        intorduction: '北区门口，邮政和其他同城到付的，还有京东的，都会打电话叫你出来拿',
+      }
+    ]
   }),
   actions: {
     Init () {
@@ -280,6 +344,12 @@ export const useContorlStore = defineStore('contorl', {
     },
     // 箭头样式
     arrowLineStyles (feature, resolution) {
+      const arrowConfig = {
+        lineWidth: 10, // 线条宽度
+        arrowScale: 0.3, // 箭头缩放比例
+        arrowSpacing: 50, // 箭头间距（像素）
+        arrowOpacity: 0.5 // 箭头透明度
+      }
       let styles = []
       // 线条样式 - 使用导入的 Style 和 Stroke
       let backgroundLineStyle = new Style({
@@ -318,11 +388,11 @@ export const useContorlStore = defineStore('contorl', {
             image: new Icon({
               // 使用导入的 Icon
               src: routearrow,
-              opacity: 0.5,
+              opacity: arrowConfig.arrowOpacity,
               anchor: [0.5, 0.5],
               rotateWithView: false,
               rotation: -rotations[distances.length - grid - 1],
-              scale: 0.7
+              scale: arrowConfig.arrowScale,
             })
           })
         )
@@ -359,10 +429,12 @@ export const useContorlStore = defineStore('contorl', {
       ]
       //大学城校区的区块
 
-
       // 创建多边形要素
       const polygonFeature = new Feature({
-        geometry: new Polygon([coords,coordinates]).transform('EPSG:4326', 'EPSG:3857')
+        geometry: new Polygon([coords, coordinates]).transform(
+          'EPSG:4326',
+          'EPSG:3857'
+        )
       })
 
       // 创建矢量图层 - 修复了多余的 new 关键字
@@ -388,7 +460,57 @@ export const useContorlStore = defineStore('contorl', {
       await map.removeLayer(this.vectorLayer)
     },
     listPop () {
-      this.listPopup=!this.listPopup
+      this.listPopup = !this.listPopup
+    },
+    //新生清单
+    //快递驿站
+    getExpress () {
+      this.list.push(...this.Express)
+      point(
+        [113.26659621497198, 23.149949771534395],
+        this.Source,
+        this.Map,
+        '快宝驿站',
+        '快宝驿站',
+        'express'
+      )
+      point(
+        [113.2663379488922, 23.15024116976791],
+        this.Source,
+        this.Map,
+        '菜鸟驿站',
+        '菜鸟驿站',
+        'express'
+      )
+      point(
+        [113.2640395184309, 23.14892530686278],
+        this.Source,
+        this.Map,
+        '顺丰快递',
+        '顺丰快递',
+        'express'
+      )
+      point(
+        [113.2649556833839, 23.14979289686113],
+        this.Source,
+        this.Map,
+        '快递柜',
+        '快递柜',
+        'express'
+      )
+    },
+    removeExpress () {
+      const pathSet = new Set(this.Express)
+      this.list = this.list.filter(item => !pathSet.has(item))
+      removePoint(this.Source, this.Map, '.express')
+    },
+    showImgFu (url = null) {
+      if (url) {
+        this.ShowImg = true
+        this.ShowImgUrl = url
+      } else {
+        this.ShowImg = false
+      }
     }
   }
 })

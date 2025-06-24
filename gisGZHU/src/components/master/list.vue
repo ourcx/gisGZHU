@@ -1,5 +1,5 @@
 <template>
-  <q-scroll-area style="height: 450px; max-width: 300px">
+  <q-scroll-area style="height: 400px; max-width: 300px">
     <div class="q-pa-md" style="max-width: 350px">
       <q-list v-for="(item, index) in list" :key="index">
         <q-item v-ripple:ripColor>
@@ -30,8 +30,8 @@
           <div
             class="col-6"
             style="padding: 16px; background-color: white; border-radius: 8px"
+            @click="ContorlStore.showImgFu(item.img)"
           >
-            <!-- 关键修改：添加.stop修饰符阻止事件冒泡 -->
             <q-img :src="item.img" style="border-radius: 8px">
               <div class="absolute-bottom text-center">
                 {{ item.name }}
@@ -57,16 +57,16 @@ import { useContorlStore } from "../../store/contorl";
 const ContorlStore = useContorlStore();
 const list = computed(() => ContorlStore.list);
 const label = ref("Click me");
-const visiblePath=ref(true)
+
 const handleClick = (item) => {
   if (item.type != "path") return;
-  if(!visiblePath.value){
-    ContorlStore.removePathLineById(item.name)
-    visiblePath.value=true
-    return
+  if (item.show) {
+    ContorlStore.removePathLineById(item.name);
+    visiblePath.value = true;
+    return;
   }
-  ContorlStore.addPathLine(item.data,{id:item.name});
-  visiblePath.value=false
+  ContorlStore.addPathLine(item.data, { id: item.name });
+  item.show = true;
 };
 </script>
 

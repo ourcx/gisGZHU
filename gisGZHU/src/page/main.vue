@@ -26,6 +26,8 @@ import { useContorlStore } from "../store/contorl";
 import Dialog from "./Dialog.vue";
 import Chip from "../components/chip/Chip.vue";
 import List from "../components/list/list.vue";
+import Showimg from "../components/Showimg.vue";
+import router from "../router";
 
 const ContorlStore = useContorlStore();
 const Store = useStore();
@@ -45,7 +47,7 @@ const maeketSource = new XYZ({
 });
 
 let changeMapX = "";
-let map = null;
+const map = ref(null); // 使用 ref 管理地图实例
 //卫星底图
 const initMap = () => {
   // 创建 OpenLayers 图层，使用上面创建的瓦片源
@@ -64,7 +66,7 @@ const initMap = () => {
     maxZoom: 18, // 设置最大缩放级别
   });
   // 创建 OpenLayers 地图实例
-  map = new Map({
+  map.value = new Map({
     target: mapElement.value,
     layers: [amapLayer],
     view: views,
@@ -80,13 +82,13 @@ const initMap = () => {
   const vectorLayer = new VectorLayer({
     source: source,
   });
-  ContorlStore.initPathLine(map);
+  ContorlStore.initPathLine(map.value);
 
   // 添加到地图
-  map.addLayer(vectorLayer);
+  map.value.addLayer(vectorLayer);
 
   // 绑定点击事件
-  map.on("click", (evt) => {
+  map.value.on("click", (evt) => {
     const coordinate = evt.coordinate; // 修正变量名拼写
     const pointFeature = new Feature({
       geometry: new Point(coordinate),
@@ -94,7 +96,7 @@ const initMap = () => {
     source.addFeature(pointFeature);
 
     // 飞行漫游效果
-    const view = map.getView();
+    const view = map.value.getView();
     view.animate({
       center: coordinate,
       duration: 1000, // 动画时长（毫秒）
@@ -105,12 +107,12 @@ const initMap = () => {
   //点标签
   // 基于点属性的悬浮提示方案
   // 4. 核心事件监听
-  map.on("pointermove", (event) => {
+  map.value.on("pointermove", (event) => {
     // 1. 获取点击像素坐标
-    const pixel = map.getEventPixel(event.originalEvent);
+    const pixel = map.value.getEventPixel(event.originalEvent);
 
     // 2. 检测要素（带容差和图层过滤）
-    const features = map.getFeaturesAtPixel(pixel, {
+    const features = map.value.getFeaturesAtPixel(pixel, {
       hitTolerance: 5, // 推荐扩大检测范围（单位：像素）
       layerFilter: (layer) => {
         // 严格验证图层实例
@@ -134,7 +136,7 @@ const initMap = () => {
 
         // 4.7 转换坐标到屏幕位置
         const coord = geometry.getCoordinates();
-        const pixelPos = map.getPixelFromCoordinate(coord);
+        const pixelPos = map.value.getPixelFromCoordinate(coord);
 
         // 4.8 定位提示框
         tooltip.style.display = "block";
@@ -149,20 +151,20 @@ const initMap = () => {
   });
 
   // 监听修改事件
-  map.on("click", (e) => {
+  map.value.on("click", (e) => {
     const coord = e.coordinate;
     console.log("新坐标：", toLonLat(coord));
   });
 
-  map.getView().on("change:resolution", () => {
-    updateLabelSize(map, views);
+  map.value.getView().on("change:resolution", () => {
+    updateLabelSize(map.value, views);
   });
 
   //添加中心点
   addPoint(
     [113.26591, 23.150009],
     source,
-    map,
+    map.value,
     "广州大学桂花岗校区",
     "又称小桂花,是大部分文科大一学生和部分研究生生活的地方,位于广州市中心区域,比较老旧"
   );
@@ -173,16 +175,19 @@ const initMap = () => {
     (newVal, oldVal) => {
       console.log("count 变化:", oldVal, "→", newVal);
       if (Store.location) {
-        startPoint(source, map);
+        startPoint(source, map.value);
       } else {
-        removePoint(source, map);
+        removePoint(source, map.value);
       }
     },
     { deep: true, immediate: true }
   );
 
+  ContorlStore.Map = map.value;
+  ContorlStore.Source = source;
+
   changeMapX = (n) => {
-    changeMap(n, map, amapLayer, maeketLayer);
+    changeMap(n, map.value, amapLayer, maeketLayer);
   };
 };
 
@@ -209,27 +214,60 @@ onMounted(() => {
 //打开区块
 const openBlock = async () => {
   //添加多边形
-  await ContorlStore.drawPolygon(map);
+  await ContorlStore.drawPolygon(map.value);
 };
 
-const closeBlock = async() => {
-  await ContorlStore.removePolygon(map);
-}
+const closeBlock = async () => {
+  await ContorlStore.removePolygon(map.value);
+};
+
+// 组件卸载
+onUnmounted(() => {
+  // 清理地图
+  if (map.value) {
+    map.value.setTarget(null);
+    map.value = null;
+  }
+
+  // 移除全屏监听
+  if (screenfull.isEnabled) {
+    screenfull.off("change");
+  }
+});
+
+const close = () => {
+  router.push("/about");
+};
+
+const addDormitory = () => {
+  router.push({
+    path: "/picture",
+    query: { type: "Dormitory" },
+  });
+};
+
+const addCanteen = () => {
+  router.push({
+    path: "/picture",
+    query: { type: "Canteen" },
+  });
+};
 </script>
 
 <template>
   <div class="q-pa-md">
+    <Showimg></Showimg>
     <Chip></Chip>
     <Dialog></Dialog>
     <List></List>
     <q-layout
       view="lHh lpr lFf"
       container
-      style="height: 800px"
+      style="height: 830px"
       class="shadow-2 rounded-borders"
     >
-      <q-header elevated>
-        <q-bar>
+      <q-header elevated class="bar-header">
+        <q-bar class="bar-header">
           <q-icon name="laptop_chromebook" />
           <div>GZHU地图</div>
 
@@ -247,9 +285,6 @@ const closeBlock = async() => {
               <q-list dense style="min-width: 100px; color: #000">
                 <q-item clickable v-close-popup @click="toggleFullscreen">
                   <q-item-section>打开全屏</q-item-section>
-                </q-item>
-                <q-item clickable v-close-popup>
-                  <q-item-section>新建</q-item-section>
                 </q-item>
                 <q-separator />
 
@@ -276,7 +311,7 @@ const closeBlock = async() => {
 
                 <q-separator />
 
-                <q-item clickable v-close-popup>
+                <q-item clickable v-close-popup @click="close()">
                   <q-item-section>退出</q-item-section>
                   <!-- 直接关闭整个网页 -->
                 </q-item>
@@ -289,13 +324,13 @@ const closeBlock = async() => {
             <q-menu auto-close>
               <q-list dense style="min-width: 100px; color: #000">
                 <q-item clickable>
-                  <q-item-section>宿舍照片</q-item-section>
+                  <q-item-section @click="addDormitory">宿舍照片</q-item-section>
                 </q-item>
-                <q-item clickable>
+                <q-item clickable @click="addCanteen">
                   <q-item-section>饭堂照片</q-item-section>
                 </q-item>
-                <q-item clickable>
-                  <q-item-section>学姐照片</q-item-section>
+                <q-item clickable to="/cat">
+                  <q-item-section>猫咪照片</q-item-section>
                 </q-item>
                 <q-separator />
                 <q-item clickable @click="openBlock()">
@@ -333,6 +368,8 @@ const closeBlock = async() => {
         :breakpoint="500"
         class="bg-grey-3"
         lazy
+        behavior="desktop"
+        elevated
       >
         <Drawer></Drawer>
       </q-drawer>
@@ -355,6 +392,10 @@ const closeBlock = async() => {
   color: black;
 }
 
+.area-select {
+  height: 100px !important;
+}
+
 .ol-hidden {
   display: none !important;
 }
@@ -362,12 +403,12 @@ const closeBlock = async() => {
 #menu-btn {
   position: relative !important;
   right: 0 !important;
-  margin-left: 87%;
+  margin-left: auto;
 }
 
 #map {
   width: 100%;
-  height: 85vh;
+  height: var(--width-map);
 }
 
 /* CSS样式 */

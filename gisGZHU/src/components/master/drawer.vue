@@ -5,11 +5,11 @@ import List from './list.vue';
 
 <template>
     
-    <q-scroll-area class="fit">
-        <div class="q-pa-sm">
-            <q-img class="absolute-top" src="https://s2.loli.net/2025/02/02/ELbK6urJqYvgBPj.jpg" style="height: 150px"
+    <q-scroll-area class="fit" >
+        <div class="q-pa-sm ">
+            <q-img class="absolute-top " src="https://s2.loli.net/2025/02/02/ELbK6urJqYvgBPj.jpg" style="height: 150px"
                 id="img" :img-style="{ opacity: 0.7 }">
-                <div class="absolute-bottom bg-transparent">
+                <div class="absolute-bottom bg-transparent ">
                     <q-avatar size="56px" class="q-mb-sm">
                         <img src="https://tse3-mm.cn.bing.net/th/id/OIP-C.T1Ir__YMxonBm9oaPK8dgwHaHa?rs=1&pid=ImgDetMain" >
                     </q-avatar>
@@ -34,6 +34,8 @@ import List from './list.vue';
     position: fixed;
     background-color: white;
 }
+
+
 
 .q-pa-sm {
     position: fixed;
