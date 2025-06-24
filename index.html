@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="./vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gisGZHU</title>
+  <script type="module" crossorigin src="./assets/index-CfmI3EZv.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DTEj3xxl.css">
+</head>
+<style>
+  :root{
+    --width-map: 90vh;
+  }
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  #app {
+    height: 100% !important;
+    width: 100% !important;
+    max-width: 10000px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+  }
+
+  .map-label {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #4a90e2;
+    font-family: Arial, sans-serif;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    font-size: 1em;
+    padding: 0.25em 0.5em;
+    border-radius: 0.2em;
+    transform: translate(-50%, -100%) scale(1);
+    transition: font-size 0.3s ease;
+  }
+
+  .map-label::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #4a90e2 transparent transparent transparent;
+  }
+
+  .map-label-children {
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+    padding: 6px 12px;
+    width: 100%;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .ol-hidden {
+    display: none !important;
+  }
+
+  .label {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    font-size: 1em;
+    padding: 0.25em 0.5em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0.2em;
+    transform: translate(-50%, -100%) scale(1);
+    transition: font-size 0.3s ease;
+    backdrop-filter: blur(50px);
+  }
+
+  .q-drawer{
+    height: var(--width-map);
+  } 
+
+
+</style>
+
+<body>
+  <div id="app"></div>
+</body>
+
+</html>
